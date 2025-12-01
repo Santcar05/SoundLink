@@ -1,5 +1,6 @@
 package com.example.soundlink.features.auth.ui.screens.register
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -16,18 +17,23 @@ class RegisterViewModel(
 ): ViewModel() {
 
 
-    fun register(name: String, email: String, pass: String, age: Long) {
+    fun register(name: String, email: String, pass: String, age: Long, onResult: (Boolean) -> Unit) {
 
         viewModelScope.launch{
             try{
-                if(registerUseCase(name, email, pass, age)){
+                if(registerUseCase(name, email, pass, age) != null){
                     sessionViewModel.setUser(User(name, email, pass, age))
-
+                    onResult(true)
                 }
                 else{
+                    onResult(false)
 
                 }
             }catch (e: Exception){
+
+                onResult(false)
+                Log.d("RegisterViewModel", "Exception: ", e)
+                Log.d("RegisterViewModel", e.printStackTrace().toString() ?: "error desconocido")
 
             }
            // registerUseCase(name, email, pass, age)

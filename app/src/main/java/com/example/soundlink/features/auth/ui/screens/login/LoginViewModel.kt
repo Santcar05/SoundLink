@@ -3,10 +3,8 @@ package com.example.soundlink.features.auth.ui.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.soundlink.core.data.datasource.RetrofitClient
+import com.example.soundlink.core.data.datasource.retrofitspringboot.RetrofitClient
 import com.example.soundlink.core.data.dto.LoginRequest
-import com.example.soundlink.core.domain.model.User
-import com.example.soundlink.core.domain.repository.UserRepository
 import com.example.soundlink.core.domain.usecases.GetUserUseCase
 import com.example.soundlink.core.ui.session.SessionViewModel
 import com.example.soundlink.features.auth.domain.usecases.LoginUseCase
@@ -36,7 +34,7 @@ class LoginViewModel(
 
             try {
                 //val result = loginUseCase(email, password)
-                val user = RetrofitClient.api.login(LoginRequest(email, password))
+                val user = loginUseCase(email, password)
                 val result = user != null
 
                 if (result) {

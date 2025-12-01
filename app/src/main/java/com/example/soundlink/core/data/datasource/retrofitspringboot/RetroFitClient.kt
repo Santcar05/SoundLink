@@ -1,13 +1,13 @@
-package com.example.soundlink.core.data.datasource
+package com.example.soundlink.core.data.datasource.retrofitspringboot
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://192.168.1.224:8080"
+    private val BASE_URL = "http://192.168.1.224:8080"
 
-    // Usa 10.0.2.2 si corres Android Studio Emulator
+    // Usa 10.0.2.2 if you are using Android Studio Emulator
 
     val api: UserApi by lazy {
         Retrofit.Builder()

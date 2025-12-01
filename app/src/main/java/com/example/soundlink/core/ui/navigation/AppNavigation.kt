@@ -1,5 +1,6 @@
 package com.example.soundlink.core.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
@@ -68,7 +69,7 @@ fun AppNavigation() {
                 navController.navigate(routes.Login.route)
             },
             onRegisterClick = { name, email, pass, age ->
-                registerViewModel.register(name, email, pass, age)
+                navController.navigate(routes.Home.route)
             },
             ) }
         //composable(routes.Home.router) { HomeScreen() }
