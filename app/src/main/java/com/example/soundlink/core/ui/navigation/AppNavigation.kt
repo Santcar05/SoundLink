@@ -1,0 +1,78 @@
+package com.example.soundlink.core.ui.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.soundlink.app.di.AppContainer
+import com.example.soundlink.core.ui.session.SessionViewModel
+import com.example.soundlink.features.auth.ui.screens.login.LoginScreen
+import com.example.soundlink.features.auth.ui.screens.login.LoginViewModel
+import com.example.soundlink.features.auth.ui.screens.register.RegisterScreen
+import com.example.soundlink.features.auth.ui.screens.register.RegisterViewModel
+
+sealed class routes(val route: String){
+    object Login : routes("login")
+    object Register : routes("register")
+    object Home : routes("home")
+}
+
+@Composable
+fun AppNavigation() {
+    // Navigation Controller uses rememberNavController() to create a navigation controller
+    val navController = rememberNavController()
+
+
+
+    // Viewmodel Creations
+
+    //Session Viewmodel GLOBAL
+    val sessionViewModel = remember {
+        SessionViewModel(
+            getUserUseCase = AppContainer.GetUserUseCase
+        )
+    }
+
+
+    //Login Viewmodel LOCAL
+    val loginViewModel = remember {
+        LoginViewModel(
+            loginUseCase = AppContainer.LoginUseCase,
+            getCurrentUser = AppContainer.GetUserUseCase
+        )
+    }
+
+    val registerViewModel = remember {
+        RegisterViewModel(
+            registerUseCase = AppContainer.RegisterUseCase,
+            sessionViewModel = sessionViewModel
+        )
+    }
+
+
+    // Navigation Graph
+    NavHost(navController = navController, startDestination = routes.Login.route) {
+        composable(routes.Login.route) { LoginScreen(loginViewModel = loginViewModel,
+            sessionViewModel = sessionViewModel,
+            onRegisterClick = {
+                navController.navigate(routes.Register.route)
+            },
+            onLoginClick = {
+                navController.navigate(routes.Home.route)
+            }
+            ) }
+        composable(routes.Register.route) { RegisterScreen(registerViewModel = registerViewModel,
+            sessionViewModel = sessionViewModel,
+            onLoginClick = {
+                navController.navigate(routes.Login.route)
+            },
+            onRegisterClick = { name, email, pass, age ->
+                registerViewModel.register(name, email, pass, age)
+            },
+            ) }
+        //composable(routes.Home.router) { HomeScreen() }
+    }
+
+
+}
