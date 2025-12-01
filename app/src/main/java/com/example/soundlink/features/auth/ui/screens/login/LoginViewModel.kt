@@ -1,5 +1,6 @@
 package com.example.soundlink.features.auth.ui.screens.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.soundlink.core.domain.model.User
@@ -22,29 +23,37 @@ class LoginViewModel(
 
 
 
-    fun login( email: String, password: String, sessionViewModel: SessionViewModel, onLoginSuccess: () -> Unit) {
+    fun login(
+        email: String,
+        password: String,
+        sessionViewModel: SessionViewModel,
+        onResult: (Boolean) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.value = LoginState(isLoading = true)
 
             try {
                 val result = loginUseCase(email, password)
+
                 if (result) {
-                    //Find and Assign user to session
+
                     val user = getCurrentUser(email)
-                    if (user != null) {
-                        sessionViewModel.setUser(user)
-                    }
+                    Log.d("LoginVM", "Usuario encontrado: $user")
 
-                    onLoginSuccess()
+                    sessionViewModel.setUser(user!!)
+                    Log.d("LoginVM", "Después del setUser")
 
-                    _uiState.value = LoginState(isLoading = false)
-                    onLoginSuccess()
+                    onResult(true)
                 } else {
-                    _uiState.value = LoginState(isLoading = false)
+                    onResult(false)
                 }
+
             } catch (e: Exception) {
+                onResult(false)
+            } finally {
                 _uiState.value = LoginState(isLoading = false)
             }
         }
     }
+
 }

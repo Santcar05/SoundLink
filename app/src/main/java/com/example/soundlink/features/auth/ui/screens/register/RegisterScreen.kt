@@ -83,7 +83,8 @@ fun RegisterScreen(
                 field = "Full Name",
                 iconId = R.drawable.logo,
                 textValue = name,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { name = it }
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -91,7 +92,8 @@ fun RegisterScreen(
                 field = "Email",
                 iconId = R.drawable.logo,
                 textValue = email,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { email = it }
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -99,7 +101,8 @@ fun RegisterScreen(
                 field = "Password",
                 iconId = R.drawable.logo,
                 textValue = pass,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { pass = it }
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -107,7 +110,8 @@ fun RegisterScreen(
                 field = "Age",
                 iconId = R.drawable.logo,
                 textValue = age,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { age = it }
             )
 
             Spacer(modifier = Modifier.height(20.dp))

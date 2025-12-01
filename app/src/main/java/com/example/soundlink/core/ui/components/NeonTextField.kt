@@ -38,8 +38,11 @@ import com.example.soundlink.app.theme.SoundLinkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NeonTextField(field : String,iconId : Int,modifier: Modifier = Modifier, textValue: String = "" ) {
-    var text by remember { mutableStateOf(textValue) }
+fun NeonTextField(    field: String,
+                      iconId: Int,
+                      modifier: Modifier = Modifier,
+                      textValue: String,
+                      onValueChange: (String) -> Unit ) {
     var isFocused by remember { mutableStateOf(false) }
 
     val neonColor = Color(0xFF00FFFF)
@@ -62,8 +65,8 @@ fun NeonTextField(field : String,iconId : Int,modifier: Modifier = Modifier, tex
             )
     ) {
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
+            value = textValue,
+            onValueChange = onValueChange,
             label = {
                 Row {
                     Icon(
@@ -134,7 +137,7 @@ fun PreviewNeonTextField() {
                 .background(Color(0xFF1A1A1A))
 
         ) {
-            NeonTextField("Email", iconId = R.drawable.logo)
+            NeonTextField("Email", iconId = R.drawable.logo, modifier = Modifier.fillMaxWidth(), textValue = "", onValueChange = {})
         }
     }
 }
@@ -147,9 +150,9 @@ fun PasswordNeonTextField(
     field: String,
     iconId: Int,
     modifier: Modifier = Modifier,
-    textValue: String = ""
+    textValue: String,
+    onValueChange: (String) -> Unit
 ) {
-    var text by remember { mutableStateOf(textValue) }
     var isFocused by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -160,7 +163,6 @@ fun PasswordNeonTextField(
         animationSpec = tween(durationMillis = 300),
         label = "glowPassword"
     )
-
     Box(
         modifier = modifier.shadow(
             elevation = glowIntensity.dp,
@@ -171,8 +173,8 @@ fun PasswordNeonTextField(
         )
     ) {
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
+            value = textValue,
+            onValueChange = onValueChange,
             label = {
                 Row {
                     Icon(
@@ -260,6 +262,6 @@ fun PasswordNeonTextField(
 @Composable
 fun PreviewPasswordNeonTextField() {
     SoundLinkTheme {
-        PasswordNeonTextField("Password", iconId = R.drawable.logo)
+        PasswordNeonTextField("Password", iconId = R.drawable.logo, textValue = "", onValueChange = {})
     }
 }

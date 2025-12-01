@@ -8,8 +8,8 @@ class UserRepositoryImpl(
     private val dataSource: InMemoryDataSource
 ): UserRepository {
 
-    override suspend fun login(username: String, password: String): Boolean {
-        return dataSource.login(username, password)
+    override suspend fun login(email: String, password: String): Boolean {
+        return dataSource.login(email, password)
     }
 
     override suspend fun register(username: String, email:String, password: String, age: Int): Boolean {
