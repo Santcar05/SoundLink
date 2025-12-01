@@ -82,7 +82,7 @@ fun LoginScreen(
 
             NeonTextField(
                 field = "Email",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.email,
                 textValue = state.email,
                 onValueChange = { state = state.copy(email = it) }
             )
@@ -91,7 +91,7 @@ fun LoginScreen(
 
             PasswordNeonTextField(
                 field = "Password",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.password,
                 textValue = state.password,
                 onValueChange = { state = state.copy(password = it) }
             )
