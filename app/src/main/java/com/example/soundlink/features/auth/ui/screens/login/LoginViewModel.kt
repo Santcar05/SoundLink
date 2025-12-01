@@ -3,6 +3,8 @@ package com.example.soundlink.features.auth.ui.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.soundlink.core.data.datasource.RetrofitClient
+import com.example.soundlink.core.data.dto.LoginRequest
 import com.example.soundlink.core.domain.model.User
 import com.example.soundlink.core.domain.repository.UserRepository
 import com.example.soundlink.core.domain.usecases.GetUserUseCase
@@ -33,15 +35,16 @@ class LoginViewModel(
             _uiState.value = LoginState(isLoading = true)
 
             try {
-                val result = loginUseCase(email, password)
+                //val result = loginUseCase(email, password)
+                val user = RetrofitClient.api.login(LoginRequest(email, password))
+                val result = user != null
 
                 if (result) {
 
-                    val user = getCurrentUser(email)
-                    Log.d("LoginVM", "Usuario encontrado: $user")
+
 
                     sessionViewModel.setUser(user!!)
-                    Log.d("LoginVM", "Después del setUser")
+
 
                     onResult(true)
                 } else {
@@ -49,8 +52,12 @@ class LoginViewModel(
                 }
 
             } catch (e: Exception) {
-                onResult(false)
-            } finally {
+            e.printStackTrace()
+            Log.e("LOGIN_ERROR", e.message ?: "error desconocido")
+                Log.e("LOGIN_ERROR", "Exception: ", e)
+            onResult(false)
+        }
+        finally {
                 _uiState.value = LoginState(isLoading = false)
             }
         }

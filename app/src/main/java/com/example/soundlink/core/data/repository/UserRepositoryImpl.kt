@@ -12,7 +12,7 @@ class UserRepositoryImpl(
         return dataSource.login(email, password)
     }
 
-    override suspend fun register(username: String, email:String, password: String, age: Int): Boolean {
+    override suspend fun register(username: String, email:String, password: String, age: Long): Boolean {
         return dataSource.register(username, email, password, age)
     }
     override suspend fun getCurrentUser(email: String): User? {
