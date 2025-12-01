@@ -7,11 +7,11 @@ import kotlin.collections.firstOrNull
 class InMemoryDataSource {
 
     private val users = mutableListOf(
-        User("name1", "user1@email.com", "pass1", 18),
-        User("name2", "user2@email.com", "pass2", 20),
-        User("name3", "user3@email.com", "pass3", 24),
-        User("name4", "user4@email.com", "pass4", 26),
-        User("name5", "user5@email.com", "pass5", 28)
+        User(1,"name1", "user1@email.com", "pass1", 18),
+        User(2,"name2", "user2@email.com", "pass2", 20),
+        User(3,"name3", "user3@email.com", "pass3", 24),
+        User(4,"name4", "user4@email.com", "pass4", 26),
+        User(5,"name5", "user5@email.com", "pass5", 28)
     )
     suspend fun login(email: String, password: String): Boolean {
         println("Usuarios actuales: $users")
@@ -19,7 +19,7 @@ class InMemoryDataSource {
     }
 
 
-    suspend fun register(name: String, email: String, password: String, age: Int): Boolean {
+    suspend fun register(name: String, email: String, password: String, age: Long): Boolean {
         return users.add(User(name, email, password, age))
     }
 

@@ -37,7 +37,7 @@ import com.example.soundlink.features.auth.domain.usecases.RegisterUseCase
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
-    onRegisterClick: (name: String, email: String, pass: String, age: Int) -> Unit,
+    onRegisterClick: (name: String, email: String, pass: String, age: Long) -> Unit,
     sessionViewModel: SessionViewModel,
     registerViewModel: RegisterViewModel
 ) {
@@ -121,7 +121,7 @@ fun RegisterScreen(
                 text = "Create Account",
                 onClick = {
                     if (age.toIntOrNull() != null) {
-                        onRegisterClick(name, email, pass, age.toInt())
+                        onRegisterClick(name, email, pass, age.toLong())
                     }
                 },
                 intensity = 40f,

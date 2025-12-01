@@ -16,7 +16,7 @@ class RegisterViewModel(
 ): ViewModel() {
 
 
-    fun register(name: String, email: String, pass: String, age: Int) {
+    fun register(name: String, email: String, pass: String, age: Long) {
 
         viewModelScope.launch{
             try{
