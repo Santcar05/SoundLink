@@ -40,46 +40,45 @@ import com.example.soundlink.core.ui.components.PasswordNeonTextField
 import com.example.soundlink.core.ui.session.SessionViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier,
-                loginViewModel: LoginViewModel,
-                sessionViewModel: SessionViewModel,
-                onRegisterClick: () -> Unit,
-                onLoginClick: () -> Unit,
-                ) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel,
+    sessionViewModel: SessionViewModel,
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit
+) {
 
     var state by remember { mutableStateOf(LoginState()) }
 
     val context = LocalContext.current
 
-    Scaffold {
-        innerPadding ->
-
-        Column(modifier = modifier
-            .padding(16.dp)
-            .padding(innerPadding)
-            .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ){
+    Scaffold { innerPadding ->
+        Column(
+            modifier = modifier
+                .padding(16.dp)
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Spacer(modifier = Modifier.weight(0.25f))
-            //Imagen del logo
-            Image( painter = painterResource(id = R.drawable.logo), contentDescription = "Logo")
-            //colocar efecto neon sombra en el texto
-            NeonTextMultiLayer("SOUNDLINK",45)
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo"
+            )
+
+            NeonTextMultiLayer("SOUNDLINK", 45)
 
             Spacer(modifier = Modifier.weight(0.025f))
-            Text(text = "Conecta con artistas de todo el mundo",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    // Choose gray color on color.kt
+
+            Text(
+                text = "Conecta con artistas de todo el mundo",
+                style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
-
             Spacer(modifier = Modifier.weight(0.05f))
-
 
             NeonTextField(
                 field = "Email",
@@ -97,80 +96,68 @@ fun LoginScreen(modifier: Modifier = Modifier,
                 onValueChange = { state = state.copy(password = it) }
             )
 
-
-
-
-            //Forgot Password Text (Right on the screen)
-            Text(text = "Forgot Password?",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    // Choose the gray color on color.kt
-                    color = MaterialTheme.colorScheme.primary
+            Text(
+                text = "Forgot Password?",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
                 ),
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable(onClick = {
-
-                        //TODO
-                    })
+                    .clickable { /* TODO */ }
                     .align(Alignment.End)
             )
 
-
-            NeonButton(text = "Login", onClick = {
-                // Check if email and password are not empty
-                if (state.email.isEmpty() || state.password.isEmpty()) {
-                    Toast.makeText(context, "Email and password are required", Toast.LENGTH_SHORT).show()
-                    return@NeonButton
-                }
-                // Logs of the login
-                Log.d("LoginScreen", "Email: ${state.email}")
-                Log.d("LoginScreen", "Password: ${state.password}")
-
-                loginViewModel.login(state.email, state.password, sessionViewModel) { success ->
-                    Log.d("LoginScreenlkdjoidejw", "Login result: $success")
-                    if (success) {
-                       // onLoginClick()
-                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+            NeonButton(
+                text = "Login",
+                onClick = {
+                    if (state.email.isEmpty() || state.password.isEmpty()) {
+                        Toast.makeText(context, "Email and password are required", Toast.LENGTH_SHORT).show()
+                        return@NeonButton
                     }
-                    else{
-                        Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
-                    }
-                }
 
-                }
-            , intensity = 40f, modifier = Modifier.height(48.dp))
+                    loginViewModel.login(state.email, state.password, sessionViewModel) { success ->
+                        if (success) Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                intensity = 40f,
+                modifier = Modifier.height(48.dp)
+            )
+
             Spacer(modifier = Modifier.weight(1f))
 
-            AuthButton(onClick = { }, icon = painterResource(id = R.drawable.google), modifier = Modifier.height(60.dp).fillMaxWidth())
+            AuthButton(
+                onClick = {},
+                icon = painterResource(id = R.drawable.google),
+                modifier = Modifier.height(60.dp).fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.weight(0.1f))
-            AuthButton(text= "Continuar con Spotify", onClick = { }, icon = painterResource(id = R.drawable.spotify), modifier = Modifier.height(60.dp).fillMaxWidth())
+
+            AuthButton(
+                text = "Continuar con Spotify",
+                onClick = {},
+                icon = painterResource(id = R.drawable.spotify),
+                modifier = Modifier.height(60.dp).fillMaxWidth()
+            )
 
             Spacer(modifier = Modifier.weight(0.3f))
 
-
-            //Register text
-            Text(text = "Don't have an account? Register",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    // Choose the gray color on color.kt
-                    color = MaterialTheme.colorScheme.primary
+            Text(
+                text = "Don't have an account? Register",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
                 ),
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable(onClick = {
-                        onRegisterClick()
-                    })
-                    
+                    .clickable { onRegisterClick() }
             )
 
             Spacer(modifier = Modifier.weight(1f))
         }
     }
-
-
 }
 
 @Preview
