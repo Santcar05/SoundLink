@@ -79,7 +79,7 @@ fun RegisterScreen(
 
             NeonTextField(
                 field = "Full Name",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.user,
                 textValue = name,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { name = it }
@@ -89,7 +89,7 @@ fun RegisterScreen(
 
             NeonTextField(
                 field = "Email",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.email,
                 textValue = email,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { email = it }
@@ -99,7 +99,7 @@ fun RegisterScreen(
 
             PasswordNeonTextField(
                 field = "Password",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.password,
                 textValue = pass,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { pass = it }
@@ -109,7 +109,7 @@ fun RegisterScreen(
 
             NeonTextField(
                 field = "Age",
-                iconId = R.drawable.logo,
+                iconId = R.drawable.clock,
                 textValue = age,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { age = it }
