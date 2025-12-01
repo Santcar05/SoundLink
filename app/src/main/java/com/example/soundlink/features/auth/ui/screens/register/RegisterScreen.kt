@@ -1,5 +1,6 @@
 package com.example.soundlink.features.auth.ui.screens.register
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +48,7 @@ fun RegisterScreen(
     var pass by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
     Scaffold { innerPadding ->
 
         Column(
@@ -116,17 +119,31 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Register button
+
             NeonButton(
                 text = "Create Account",
                 onClick = {
                     if (age.toIntOrNull() != null) {
-                        onRegisterClick(name, email, pass, age.toLong())
+
+                        registerViewModel.register(name, email, pass, age.toLong(), onResult = { success ->
+
+                            if (success) {
+                                Toast.makeText(context, "Register successful", Toast.LENGTH_SHORT).show()
+                                onRegisterClick(name, email, pass, age.toLong())
+                            } else {
+                                Toast.makeText(context, "Register failed", Toast.LENGTH_SHORT).show()
+                            }
+
+                        })
+
+                    } else {
+                        Toast.makeText(context, "Age must be a number", Toast.LENGTH_SHORT).show()
                     }
                 },
                 intensity = 40f,
                 modifier = Modifier.height(48.dp)
             )
+
 
             Spacer(modifier = Modifier.weight(1f))
 
