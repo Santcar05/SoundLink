@@ -205,9 +205,9 @@ fun PasswordNeonTextField(
             // ----------- ICON TO SHOW  / HIDE -------------
             trailingIcon = {
                 val eyeIcon = if (passwordVisible)
-                    R.drawable.logo   // ICON
+                    R.drawable.eyeshow   // ICON
                 else
-                    R.drawable.logo       // ICON
+                    R.drawable.eyehide       // ICON
 
                 Icon(
                     painter = painterResource(id = eyeIcon),
