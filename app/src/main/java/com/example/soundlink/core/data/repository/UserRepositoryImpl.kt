@@ -15,7 +15,7 @@ class UserRepositoryImpl(
         return dataSource.login(LoginRequest(email, password))
     }
 
-    override suspend fun register(username: String, email:String, password: String, age: Long): User {
+    override suspend fun register(username: String, email:String, password: String, age: Int): User {
         return dataSource.register(RegisterRequest(username, email, password, age))
     }
     override suspend fun getCurrentUser(email: String): User? {

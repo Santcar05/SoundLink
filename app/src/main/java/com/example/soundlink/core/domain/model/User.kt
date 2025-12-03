@@ -1,12 +1,15 @@
 package com.example.soundlink.core.domain.model
 
-data class User (
-    val id: Long?,
+data class User(
+    val id: Long,
     val name: String,
     val email: String,
     val password: String,
-    val age: Long
+    val age: Int,
+    val avatarUrl: String,
+    val verified: Boolean
 ){
-    constructor() : this(null, "", "", "", 0)
-    constructor( name: String, email: String, password: String, age: Long) : this(null, name, email, password, age)
+    constructor() : this(0, "", "", "", 0, "", false)
+    //Only name, email, password, age
+    constructor(name: String, email: String, password: String, age: Int) : this(0, name, email, password, age, "", false)
 }

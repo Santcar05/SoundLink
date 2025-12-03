@@ -117,7 +117,11 @@ fun LoginScreen(
                     }
 
                     loginViewModel.login(state.email, state.password, sessionViewModel) { success ->
-                        if (success) Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                        if (success){
+                            Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                            onLoginClick()
+                        }
+
                         else Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
                     }
                 },

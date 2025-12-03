@@ -3,11 +3,9 @@ package com.example.soundlink.features.auth.ui.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.soundlink.core.data.datasource.retrofitspringboot.RetrofitClient
-import com.example.soundlink.core.data.dto.LoginRequest
 import com.example.soundlink.core.domain.usecases.GetUserUseCase
 import com.example.soundlink.core.ui.session.SessionViewModel
-import com.example.soundlink.features.auth.domain.usecases.LoginUseCase
+import com.example.soundlink.features.auth.usecases.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
