@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,27 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import com.example.soundlink.R
 import com.example.soundlink.app.di.AppContainer
 import com.example.soundlink.app.theme.SoundLinkTheme
-import com.example.soundlink.core.domain.usecases.GetUserUseCase
 import com.example.soundlink.core.ui.components.NeonButton
 import com.example.soundlink.core.ui.components.NeonTextField
 import com.example.soundlink.core.ui.components.NeonTextMultiLayer
 import com.example.soundlink.core.ui.components.PasswordNeonTextField
 import com.example.soundlink.core.ui.session.SessionViewModel
-import com.example.soundlink.features.auth.domain.usecases.RegisterUseCase
+
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
-    onRegisterClick: (name: String, email: String, pass: String, age: Long) -> Unit,
+    onRegisterClick: (name: String, email: String, pass: String, age: Int) -> Unit,
     sessionViewModel: SessionViewModel,
     registerViewModel: RegisterViewModel
 ) {
@@ -146,17 +141,17 @@ fun RegisterScreen(
             NeonButton(
                 text = "Create Account",
                 onClick = {
-                    val ageLong = age.toLongOrNull()
+                    val ageInt= age.toInt()
 
-                    if (ageLong == null) {
+                    if (ageInt == null) {
                         Toast.makeText(context, "Age must be a number", Toast.LENGTH_SHORT).show()
                         return@NeonButton
                     }
 
-                    registerViewModel.register(name, email, pass, ageLong) { success ->
+                    registerViewModel.register(name, email, pass, ageInt) { success ->
                         if (success) {
                             Toast.makeText(context, "Register successful", Toast.LENGTH_SHORT).show()
-                            onRegisterClick(name, email, pass, ageLong)
+                            onRegisterClick(name, email, pass, ageInt)
                         } else {
                             Toast.makeText(context, "Register failed", Toast.LENGTH_SHORT).show()
                         }

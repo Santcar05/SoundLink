@@ -12,11 +12,15 @@ import com.example.soundlink.features.auth.ui.screens.login.LoginScreen
 import com.example.soundlink.features.auth.ui.screens.login.LoginViewModel
 import com.example.soundlink.features.auth.ui.screens.register.RegisterScreen
 import com.example.soundlink.features.auth.ui.screens.register.RegisterViewModel
+import com.example.soundlink.features.feed.ui.screens.feed.FeedScreen
+import com.example.soundlink.features.feed.ui.screens.feed.FeedViewModel
 
 sealed class routes(val route: String){
     object Login : routes("login")
     object Register : routes("register")
     object Home : routes("home")
+
+    object Feed : routes("feed")
 }
 
 @Composable
@@ -51,6 +55,15 @@ fun AppNavigation() {
         )
     }
 
+    // Feed Viewmodel LOCAL
+    val feedViewModel = remember {
+        FeedViewModel(
+            getAllPostsUseCase = AppContainer.GetAllPostsUseCase,
+            getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase,
+            sessionViewModel = sessionViewModel
+        )
+    }
+
 
     // Navigation Graph
     NavHost(navController = navController, startDestination = routes.Login.route) {
@@ -60,7 +73,7 @@ fun AppNavigation() {
                 navController.navigate(routes.Register.route)
             },
             onLoginClick = {
-                navController.navigate(routes.Home.route)
+                navController.navigate(routes.Feed.route)
             }
             ) }
         composable(routes.Register.route) { RegisterScreen(registerViewModel = registerViewModel,
@@ -69,10 +82,11 @@ fun AppNavigation() {
                 navController.navigate(routes.Login.route)
             },
             onRegisterClick = { name, email, pass, age ->
-                navController.navigate(routes.Home.route)
+                navController.navigate(routes.Feed.route)
             },
             ) }
-        //composable(routes.Home.router) { HomeScreen() }
+
+        composable(routes.Feed.route) { FeedScreen(feedViewModel = feedViewModel, sessionViewModel = sessionViewModel) }
     }
 
 

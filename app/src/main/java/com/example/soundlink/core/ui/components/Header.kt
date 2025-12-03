@@ -30,8 +30,8 @@ fun Header() {
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
+
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp)
             .drawBehind {
                 val strokeWidth = 0.5.dp.toPx()
                 val y = size.height - strokeWidth / 2
@@ -47,6 +47,7 @@ fun Header() {
         verticalAlignment = Alignment.CenterVertically
     )
  {
+        Spacer(modifier = Modifier.padding(4.dp))
         NeonTextMultiLayer(text = "SoundLink", fontSize = 32)
 
         Spacer(modifier = Modifier.weight(1f))
@@ -56,10 +57,11 @@ fun Header() {
             modifier = Modifier.fillMaxWidth()
                 .height(56.dp)){
             // Two icons
-            Icon(painter = painterResource(id = R.drawable.search), contentDescription = "Logo", modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.padding(10.dp))
-            Icon(painter = painterResource(id = R.drawable.bell), contentDescription = "Logo", modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary)
+            Icon(painter = painterResource(id = R.drawable.search), contentDescription = "Logo", modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
+            Spacer(modifier = Modifier.padding(14.dp))
+            Icon(painter = painterResource(id = R.drawable.bell), contentDescription = "Logo", modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
 
+            Spacer(modifier = Modifier.padding(4.dp))
         }
 
     }

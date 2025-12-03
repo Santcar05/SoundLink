@@ -1,5 +1,6 @@
 package com.example.soundlink.core.ui.components
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -33,6 +34,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -59,142 +62,93 @@ import com.example.soundlink.R
  */
 @Composable
 fun StoryRing(
-    imagePainter: Painter,
+    image: Any,
     modifier: Modifier = Modifier,
     size: Dp = 88.dp,
     ringWidth: Dp = 8.dp,
     isSeen: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    // Extraemos colores desde el tema (asume que tu theme está definido).
-    val primary = MaterialTheme.colorScheme.primary
-    val secondary = MaterialTheme.colorScheme.secondary
-    val tertiary = MaterialTheme.colorScheme.tertiary
-    val background = MaterialTheme.colorScheme.background
+    // Convertir imagen a Painter
+    val imagePainter = when (image) {
+        is Painter -> image
+        is ImageBitmap -> BitmapPainter(image)
+        is Bitmap -> BitmapPainter(image.asImageBitmap())
+        is Int -> painterResource(id = image)
+        else -> painterResource(id = R.drawable.user)
+    }
 
-    // Animaciones: rotación del anillo y pulso del avatar.
     val infinite = rememberInfiniteTransition()
 
+    // Solo este valor rotará el degradado del anillo
     val rotation by infinite.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = if (isSeen) 8000 else 4500, easing = LinearEasing),
+            animation = tween(3500, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         )
     )
 
-    val pulse by infinite.animateFloat(
-        initialValue = 0.985f,
-        targetValue = 1.02f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 900, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    // Shimmer offset (for subtle moving light on the ring)
-    val shimmerOffset by infinite.animateFloat(
-        initialValue = -1f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1600, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
-    )
-
-    // Si está visto, usamos una paleta apagada.
+    // Colores del anillo
     val ringColors = if (isSeen) {
-        listOf(primary.copy(alpha = 0.5f), secondary.copy(alpha = 0.25f))
+        listOf(
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+            MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)
+        )
     } else {
-        // combinación llamativa desde el tema
-        listOf(primary, secondary, tertiary, primary)
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.tertiary,
+            MaterialTheme.colorScheme.primary
+        )
     }
 
     Box(
         modifier = modifier
-            .size(size)
-            .graphicsLayer {
-                // rotamos el anillo entero (la imagen será contrarotada dentro si quieres que no rote)
-                rotationZ = rotation
-                scaleX = pulse
-                scaleY = pulse
-                transformOrigin = TransformOrigin.Center
-            }
-            .padding(2.dp) // margen interno para la sombra visual
-            .shadow(elevation = 8.dp, shape = CircleShape, clip = false),
+            .size(size),
         contentAlignment = Alignment.Center
     ) {
-        // Outer gradient ring drawn with drawBehind for full control
         val ringStrokePx = with(LocalDensity.current) { ringWidth.toPx() }
+
+        // Dibujamos el ring y rotamos SOLO SU BRUSH
         Box(
-            Modifier
+            modifier = Modifier
                 .matchParentSize()
                 .drawBehind {
-                    val diameter = size.toPx()
-                    val arcSize = Size(diameter, diameter)
-                    val radius = diameter / 2f
-                    // Brush tipo sweep (circular) para degradado del anillo
+                    val radius = size.toPx() / 2f
+
+                    // 🔥 Aquí es donde ocurre la rotación del color
                     val sweepBrush = Brush.sweepGradient(
-                        colors = ringColors,
-                        center = Offset(radius, radius)
-                    )
-                    // dibuja anillo completo usando stroke
-                    drawCircle(
-                        brush = sweepBrush,
-                        radius = radius - ringStrokePx / 2f,
-                        style = Stroke(width = ringStrokePx)
+                        colors = ringColors
                     )
 
-                    // Shimmer: un pequeño overlay radial translúcido que se mueve
-                    // (se simula con un arc semi-transparente)
-                    val shimmerBrush = Brush.radialGradient(
-                        colors = listOf(Color.White.copy(alpha = if (isSeen) 0.03f else 0.10f), Color.Transparent),
-                        center = Offset(radius + shimmerOffset * radius * 0.3f, radius - shimmerOffset * radius * 0.2f),
-                        radius = radius * 0.9f
-                    )
-                    // dibuja encima del anillo (ligera máscara)
-                    drawCircle(
-                        brush = shimmerBrush,
-                        radius = radius - ringStrokePx / 2f
-                    )
+                    withTransform({
+                        rotate(rotation, pivot = Offset(radius, radius))
+                    }) {
+                        drawCircle(
+                            brush = sweepBrush,
+                            radius = radius - ringStrokePx / 2f,
+                            style = Stroke(width = ringStrokePx)
+                        )
+                    }
                 }
         )
 
-        // Imagen circular (avatar)
+        // Imagen circular (NO se rota)
         Box(
             modifier = Modifier
-                .size(size - ringWidth * 2f) // interior dejando espacio para el anillo
+                .size(size - ringWidth * 2)
                 .clip(CircleShape)
-                .background(background)
-                .border(
-                    BorderStroke(1.dp, MaterialTheme.colorScheme.surface.copy(alpha = 0.06f)),
-                    shape = CircleShape
-                )
-                .clickable { onClick() },
-            contentAlignment = Alignment.Center
+                .background(MaterialTheme.colorScheme.background)
+                .clickable { onClick() }
         ) {
             Image(
                 painter = imagePainter,
-                contentDescription = "Avatar",
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-            )
-        }
-
-        // Pequeño indicador "online" con glow (opcional; se superpone en la esquina inferior derecha)
-        if (!isSeen) {
-            val indicatorSize = (size.value * 0.20f).dp
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (indicatorSize * 0.1f), y = (indicatorSize * 0.1f))
-                    .size(indicatorSize)
-                    .shadow(elevation = 6.dp, shape = CircleShape)
-                    .background(color = MaterialTheme.colorScheme.secondary, shape = CircleShape)
-                    .border(2.dp, background, CircleShape)
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -216,7 +170,7 @@ fun PreviewStoryRing() {
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
             StoryRing(
-                imagePainter = painter,
+                image = painter,
                 size = 96.dp,
                 ringWidth = 9.dp,
                 isSeen = false,

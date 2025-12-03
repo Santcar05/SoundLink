@@ -9,11 +9,15 @@ object RetrofitClient {
 
     // Usa 10.0.2.2 if you are using Android Studio Emulator
 
-    val api: UserApi by lazy {
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(UserApi::class.java)
     }
+
+    val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
+    val storyApi: StoryApi by lazy { retrofit.create(StoryApi::class.java) }
+    val postApi: PostApi by lazy { retrofit.create(PostApi::class.java) }
+
 }
