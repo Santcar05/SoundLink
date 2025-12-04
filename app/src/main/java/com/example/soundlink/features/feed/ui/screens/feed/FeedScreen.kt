@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -34,6 +35,8 @@ import com.example.soundlink.app.di.AppContainer
 import com.example.soundlink.app.theme.SoundLinkTheme
 import com.example.soundlink.core.ui.components.AnimatedLoadingBorder
 import com.example.soundlink.core.ui.components.Header
+import com.example.soundlink.core.ui.components.NavBarItemSoundLink
+import com.example.soundlink.core.ui.components.NavbarSoundLink
 import com.example.soundlink.core.ui.components.PostCard
 import com.example.soundlink.core.ui.components.StoryRing
 import com.example.soundlink.core.ui.session.SessionViewModel
@@ -49,10 +52,30 @@ fun FeedScreen(
 ) {
     val state = feedViewModel.uiState.collectAsState().value
 
+    var selectedIndex by remember { mutableStateOf(0) }
+
     Scaffold(
+        modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             FabButton(onClick = onFabClick)
         },
+        bottomBar = {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding() // Used to prevent the navbar from being hidden by the bottom navigation bar
+            ) {
+                NavbarSoundLink(
+                    items = listOf(
+                        NavBarItemSoundLink(icon = R.drawable.home, label = "Home"),
+                        NavBarItemSoundLink(icon = R.drawable.search, label = "Search"),
+                        NavBarItemSoundLink(icon = R.drawable.user, label = "Profile"),
+                    ),
+                    selectedIndex = selectedIndex,
+                    onItemSelected = { selectedIndex = it },
+                )
+            }
+        }
     ){ contentPadding ->
         Column(
             modifier = modifier
