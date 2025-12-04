@@ -2,6 +2,7 @@ package com.example.soundlink.features.feed.ui.screens.feed
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.soundlink.R
 import com.example.soundlink.app.di.AppContainer
 import com.example.soundlink.app.theme.SoundLinkTheme
@@ -36,22 +38,29 @@ import com.example.soundlink.core.ui.components.PostCard
 import com.example.soundlink.core.ui.components.StoryRing
 import com.example.soundlink.core.ui.session.SessionViewModel
 import com.example.soundlink.features.auth.ui.screens.login.LoginState
+import com.example.soundlink.features.feed.ui.components.FabButton
 
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
     sessionViewModel: SessionViewModel,
-    feedViewModel: FeedViewModel
+    feedViewModel: FeedViewModel,
+    onFabClick: () -> Unit
 ) {
     val state = feedViewModel.uiState.collectAsState().value
 
-    Scaffold{ contentPadding ->
+    Scaffold(
+        floatingActionButton = {
+            FabButton(onClick = onFabClick)
+        },
+    ){ contentPadding ->
         Column(
             modifier = modifier
                 .padding(contentPadding)
                 .padding(4.dp)
                 .fillMaxSize()
         ) {
+
 
             Column {
                 Header()
@@ -112,6 +121,9 @@ fun FeedScreen(
 
                 }
             }
+
+
+
         }
     }
 }
@@ -124,7 +136,11 @@ fun FeedScreenPreview() {
     SoundLinkTheme {
         FeedScreen(
             sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase),
-            feedViewModel = FeedViewModel( getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase, getAllPostsUseCase = AppContainer.GetAllPostsUseCase, sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase)  )
+            feedViewModel = FeedViewModel( getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase, getAllPostsUseCase = AppContainer.GetAllPostsUseCase, sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase) ),
+                onFabClick = {
+                    val sum = 1 + 1
+                    Log.d("FeedScreen", "Sum: $sum")
+                }
         )
     }
 }

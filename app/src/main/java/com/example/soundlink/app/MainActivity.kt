@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.example.soundlink.app.theme.SoundLinkTheme
+//import com.example.soundlink.core.data.datasource.cloudinary.CloudinaryConfig
 import com.example.soundlink.core.ui.navigation.AppNavigation
 import com.example.soundlink.features.auth.ui.screens.login.LoginScreen
 
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SoundLinkTheme {
+                //CloudinaryConfig.initiliaze(this)
                 AppNavigation()
             }
         }

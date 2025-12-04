@@ -1,6 +1,7 @@
 package com.example.soundlink.core.ui.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
@@ -8,10 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.soundlink.app.di.AppContainer
 import com.example.soundlink.core.ui.session.SessionViewModel
+import com.example.soundlink.feature.createpost.CreatePostScreen
 import com.example.soundlink.features.auth.ui.screens.login.LoginScreen
 import com.example.soundlink.features.auth.ui.screens.login.LoginViewModel
 import com.example.soundlink.features.auth.ui.screens.register.RegisterScreen
 import com.example.soundlink.features.auth.ui.screens.register.RegisterViewModel
+import com.example.soundlink.features.feed.ui.screens.createpost.CreatePostViewModel
 import com.example.soundlink.features.feed.ui.screens.feed.FeedScreen
 import com.example.soundlink.features.feed.ui.screens.feed.FeedViewModel
 
@@ -21,6 +24,8 @@ sealed class routes(val route: String){
     object Home : routes("home")
 
     object Feed : routes("feed")
+
+    object CreatePost : routes("create_post")
 }
 
 @Composable
@@ -64,6 +69,14 @@ fun AppNavigation() {
         )
     }
 
+    // CreatePost Viewmodel LOCAL
+    val createPostViewModel = remember {
+        CreatePostViewModel(
+            createPostUseCase = AppContainer.CreatePostUseCase,
+            sessionViewModel = sessionViewModel
+        )
+    }
+
 
     // Navigation Graph
     NavHost(navController = navController, startDestination = routes.Login.route) {
@@ -86,7 +99,19 @@ fun AppNavigation() {
             },
             ) }
 
-        composable(routes.Feed.route) { FeedScreen(feedViewModel = feedViewModel, sessionViewModel = sessionViewModel) }
+        composable(routes.Feed.route) { FeedScreen(feedViewModel = feedViewModel, sessionViewModel = sessionViewModel,
+            onFabClick = {
+                navController.navigate(routes.CreatePost.route)
+            }) }
+
+
+        composable(routes.CreatePost.route) { CreatePostScreen(createPostViewModel = createPostViewModel, onPost = {
+
+            navController.navigate(routes.Feed.route)
+
+        }, onCancel = {
+            navController.navigate(routes.Feed.route)
+        }) }
     }
 
 
