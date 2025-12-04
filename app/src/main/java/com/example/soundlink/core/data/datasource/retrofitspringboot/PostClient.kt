@@ -1,5 +1,6 @@
 package com.example.soundlink.core.data.datasource.retrofitspringboot
 
+import com.example.soundlink.core.data.dto.CreatePostRequest
 import com.example.soundlink.core.domain.model.Post
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +18,7 @@ interface PostApi {
     suspend fun getPostById(@Path("id") id: Long): Post
 
     @POST("/api/posts/")
-    suspend fun createPost(@Body post: Post): Post
+    suspend fun createPost(@Body post: CreatePostRequest): CreatePostRequest
 
     @PUT("/api/posts/{id}")
     suspend fun updatePost(@Path("id") id: Long, @Body post: Post): Post

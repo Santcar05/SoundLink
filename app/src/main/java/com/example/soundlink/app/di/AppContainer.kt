@@ -15,6 +15,7 @@ import com.example.soundlink.core.domain.usecases.GetAllStoriesUseCase
 import com.example.soundlink.core.domain.usecases.GetUserUseCase
 import com.example.soundlink.features.auth.usecases.LoginUseCase
 import com.example.soundlink.features.auth.usecases.RegisterUseCase
+import com.example.soundlink.features.feed.usecases.CreatePostUseCase
 
 object AppContainer {
 
@@ -35,6 +36,7 @@ object AppContainer {
 
     val GetAllPostsUseCase = GetAllPostsUseCase(postRepository)
 
+    val CreatePostUseCase = CreatePostUseCase(postRepository)
 
 
 }

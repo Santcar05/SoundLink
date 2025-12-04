@@ -1,6 +1,7 @@
 package com.example.soundlink.core.data.repository
 
 import com.example.soundlink.core.data.datasource.retrofitspringboot.PostApi
+import com.example.soundlink.core.data.dto.CreatePostRequest
 import com.example.soundlink.core.domain.model.Post
 import com.example.soundlink.core.domain.model.User
 import com.example.soundlink.core.domain.repository.PostRepository
@@ -25,7 +26,7 @@ class PostRepositoryImpl(private val postApi: PostApi): PostRepository {
     override suspend fun getPostById(id: Long): Post {
         return postApi.getPostById(id)
     }
-    override suspend fun createPost(post: Post): Post {
+    override suspend fun createPost(post: CreatePostRequest): CreatePostRequest {
         return postApi.createPost(post)
     }
     override suspend fun updatePost(post: Post): Post {
