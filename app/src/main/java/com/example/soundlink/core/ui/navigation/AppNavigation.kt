@@ -65,7 +65,10 @@ fun AppNavigation() {
         FeedViewModel(
             getAllPostsUseCase = AppContainer.GetAllPostsUseCase,
             getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase,
-            sessionViewModel = sessionViewModel
+            sessionViewModel = sessionViewModel,
+            connectWebSocketUseCase = AppContainer.ConnectWebSocketUseCase,
+            disconnectWebSocketUseCase = AppContainer.DisconnectWebSocketUseCase,
+            observeNewPostsUseCase = AppContainer.ObserveNewPostsUseCase
         )
     }
 

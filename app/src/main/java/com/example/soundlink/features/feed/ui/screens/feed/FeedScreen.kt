@@ -33,6 +33,8 @@ import androidx.compose.ui.zIndex
 import com.example.soundlink.R
 import com.example.soundlink.app.di.AppContainer
 import com.example.soundlink.app.theme.SoundLinkTheme
+import com.example.soundlink.core.data.websockets.StompClient
+import com.example.soundlink.core.data.websockets.WebSocketDataSource
 import com.example.soundlink.core.ui.components.AnimatedLoadingBorder
 import com.example.soundlink.core.ui.components.Header
 import com.example.soundlink.core.ui.components.NavBarItemSoundLink
@@ -42,6 +44,7 @@ import com.example.soundlink.core.ui.components.StoryRing
 import com.example.soundlink.core.ui.session.SessionViewModel
 import com.example.soundlink.features.auth.ui.screens.login.LoginState
 import com.example.soundlink.features.feed.ui.components.FabButton
+import kotlinx.serialization.json.Json
 
 @Composable
 fun FeedScreen(
@@ -159,11 +162,20 @@ fun FeedScreenPreview() {
     SoundLinkTheme {
         FeedScreen(
             sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase),
-            feedViewModel = FeedViewModel( getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase, getAllPostsUseCase = AppContainer.GetAllPostsUseCase, sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase) ),
+            feedViewModel = FeedViewModel(
+                getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase,
+                getAllPostsUseCase = AppContainer.GetAllPostsUseCase,
+                sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase),
+                connectWebSocketUseCase = AppContainer.ConnectWebSocketUseCase,
+                disconnectWebSocketUseCase = AppContainer.DisconnectWebSocketUseCase,
+                observeNewPostsUseCase = AppContainer.ObserveNewPostsUseCase
+            ),
                 onFabClick = {
                     val sum = 1 + 1
                     Log.d("FeedScreen", "Sum: $sum")
-                }
+                },
+
+
         )
     }
 }
