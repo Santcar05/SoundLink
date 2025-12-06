@@ -1,6 +1,7 @@
 package com.example.soundlink.features.auth.ui.screens.login
 
 
+import android.media.SoundPool
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,19 @@ fun LoginScreen(
     var state by remember { mutableStateOf(LoginState()) }
 
     val context = LocalContext.current
+    // Crear SoundPool(Soundpool es la clase que se encarga de cargar los sonidos)
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+    }
+
+
+    // Cargar sonido
+    val soundId = remember {
+        soundPool.load(context, R.raw.click, 1)
+    }
+
 
     Scaffold { innerPadding ->
         Column(
@@ -111,6 +126,7 @@ fun LoginScreen(
             NeonButton(
                 text = "Login",
                 onClick = {
+                    soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
                     if (state.email.isEmpty() || state.password.isEmpty()) {
                         Toast.makeText(context, "Email and password are required", Toast.LENGTH_SHORT).show()
                         return@NeonButton
@@ -162,6 +178,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
     }
+
 }
 
 @Preview

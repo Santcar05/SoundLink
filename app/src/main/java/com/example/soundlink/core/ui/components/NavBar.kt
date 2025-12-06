@@ -1,5 +1,6 @@
 package com.example.soundlink.core.ui.components
 
+import android.media.SoundPool
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +31,15 @@ fun NavbarSoundLink(
     onItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+    }
+    val soundId = remember {
+        soundPool.load(context, R.raw.click, 1)
+    }
     val backgroundColor = MaterialTheme.colorScheme.surface
     val indicatorColor = MaterialTheme.colorScheme.primary
     Row(
@@ -46,7 +57,9 @@ fun NavbarSoundLink(
                 item = item,
                 selected = index == selectedIndex,
                 indicatorColor = indicatorColor,
-                onClick = { onItemSelected(index) }
+                onClick = {
+                    soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
+                    onItemSelected(index) }
             )
         }
     }
@@ -60,6 +73,19 @@ fun NavBarButton(
     onClick: () -> Unit
 ) {
     val transition = updateTransition(selected, label = "NavBarButtonTransition")
+    val context = LocalContext.current
+    // Crear SoundPool(Soundpool es la clase que se encarga de cargar los sonidos)
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+    }
+
+
+    // Cargar sonido
+    val soundId = remember {
+        soundPool.load(context, R.raw.click, 1)
+    }
 
     val iconScale by transition.animateFloat(
         label = "IconScale",
@@ -94,6 +120,7 @@ fun NavBarButton(
                 contentDescription = item.label,
                 tint = if (selected) indicatorColor else MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
+
                     .size(32.dp)
                     .graphicsLayer {
                         scaleX = iconScale

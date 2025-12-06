@@ -45,45 +45,28 @@ fun AppNavigation() {
     }
 
 
-    //Login Viewmodel LOCAL
-    val loginViewModel = remember {
-        LoginViewModel(
-            loginUseCase = AppContainer.LoginUseCase,
-            getCurrentUser = AppContainer.GetUserUseCase
-        )
-    }
 
-    val registerViewModel = remember {
-        RegisterViewModel(
-            registerUseCase = AppContainer.RegisterUseCase,
-            sessionViewModel = sessionViewModel
-        )
-    }
 
-    // Feed Viewmodel LOCAL
-    val feedViewModel = remember {
-        FeedViewModel(
-            getAllPostsUseCase = AppContainer.GetAllPostsUseCase,
-            getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase,
-            sessionViewModel = sessionViewModel,
-            connectWebSocketUseCase = AppContainer.ConnectWebSocketUseCase,
-            disconnectWebSocketUseCase = AppContainer.DisconnectWebSocketUseCase,
-            observeNewPostsUseCase = AppContainer.ObserveNewPostsUseCase
-        )
-    }
 
-    // CreatePost Viewmodel LOCAL
-    val createPostViewModel = remember {
-        CreatePostViewModel(
-            createPostUseCase = AppContainer.CreatePostUseCase,
-            sessionViewModel = sessionViewModel
-        )
-    }
+
+
 
 
     // Navigation Graph
     NavHost(navController = navController, startDestination = routes.Login.route) {
-        composable(routes.Login.route) { LoginScreen(loginViewModel = loginViewModel,
+
+
+        composable(routes.Login.route) {
+            // Viewmodel creation
+            //Login Viewmodel LOCAL
+            val loginViewModel = remember {
+                LoginViewModel(
+                    loginUseCase = AppContainer.LoginUseCase,
+                    getCurrentUser = AppContainer.GetUserUseCase
+                )
+            }
+
+            LoginScreen(loginViewModel = loginViewModel,
             sessionViewModel = sessionViewModel,
             onRegisterClick = {
                 navController.navigate(routes.Register.route)
@@ -92,7 +75,17 @@ fun AppNavigation() {
                 navController.navigate(routes.Feed.route)
             }
             ) }
-        composable(routes.Register.route) { RegisterScreen(registerViewModel = registerViewModel,
+        composable(routes.Register.route) {
+            val registerViewModel = remember {
+                RegisterViewModel(
+                    registerUseCase = AppContainer.RegisterUseCase,
+                    sessionViewModel = sessionViewModel
+                )
+            }
+
+
+
+            RegisterScreen(registerViewModel = registerViewModel,
             sessionViewModel = sessionViewModel,
             onLoginClick = {
                 navController.navigate(routes.Login.route)
@@ -102,13 +95,38 @@ fun AppNavigation() {
             },
             ) }
 
-        composable(routes.Feed.route) { FeedScreen(feedViewModel = feedViewModel, sessionViewModel = sessionViewModel,
+        composable(routes.Feed.route) {
+            // Viewmodel creation
+            // Feed Viewmodel LOCAL
+            val feedViewModel = remember {
+                FeedViewModel(
+                    getAllPostsUseCase = AppContainer.GetAllPostsUseCase,
+                    getAllStoriesUseCase = AppContainer.GetAllStoriesUseCase,
+                    sessionViewModel = sessionViewModel,
+                    connectWebSocketUseCase = AppContainer.ConnectWebSocketUseCase,
+                    disconnectWebSocketUseCase = AppContainer.DisconnectWebSocketUseCase,
+                    observeNewPostsUseCase = AppContainer.ObserveNewPostsUseCase
+                )
+            }
+
+
+            FeedScreen(feedViewModel = feedViewModel, sessionViewModel = sessionViewModel,
             onFabClick = {
                 navController.navigate(routes.CreatePost.route)
             }) }
 
 
-        composable(routes.CreatePost.route) { CreatePostScreen(createPostViewModel = createPostViewModel, onPost = {
+        composable(routes.CreatePost.route) {
+            // CreatePost Viewmodel LOCAL
+            val createPostViewModel = remember {
+                CreatePostViewModel(
+                    createPostUseCase = AppContainer.CreatePostUseCase,
+                    sessionViewModel = sessionViewModel
+                )
+            }
+
+
+            CreatePostScreen(createPostViewModel = createPostViewModel, onPost = {
 
             navController.navigate(routes.Feed.route)
 
