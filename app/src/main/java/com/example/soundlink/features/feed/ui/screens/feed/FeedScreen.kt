@@ -41,7 +41,9 @@ import com.example.soundlink.core.ui.components.NavBarItemSoundLink
 import com.example.soundlink.core.ui.components.NavbarSoundLink
 import com.example.soundlink.core.ui.components.PostCard
 import com.example.soundlink.core.ui.components.StoryRing
+import com.example.soundlink.core.ui.components.universalPainter
 import com.example.soundlink.core.ui.session.SessionViewModel
+import com.example.soundlink.core.utils.timestampToLegible
 import com.example.soundlink.features.auth.ui.screens.login.LoginState
 import com.example.soundlink.features.feed.ui.components.FabButton
 import kotlinx.serialization.json.Json
@@ -129,11 +131,11 @@ fun FeedScreen(
 
                         PostCard(
                             modifier = modifier,
-                            avatar = painterResource(id = R.drawable.user),
+                            avatar = universalPainter(post.user.avatarUrl),
                             username = post.user.name,
                             verified = post.user.verified,
                             genre = "Rock", //TODO: Cambiar por el género del post
-                            time = post.timestamp.toString(),
+                            time = timestampToLegible(post.timestamp),
                             title = post.title,
                             description = post.description,
                             tags = post.tags,
