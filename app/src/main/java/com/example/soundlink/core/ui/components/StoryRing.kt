@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 import com.example.soundlink.R
 
 
@@ -75,6 +76,7 @@ fun StoryRing(
     val context = LocalContext.current
 
     // Crear SoundPool(Soundpool es la clase que se encarga de cargar los sonidos)
+/*
     val soundPool = remember {
         SoundPool.Builder()
             .setMaxStreams(1)
@@ -87,15 +89,12 @@ fun StoryRing(
         soundPool.load(context, R.raw.click, 1)
     }
 
+ */
 
-    // Convertir imagen a Painter
-    val imagePainter = when (image) {
-        is Painter -> image
-        is ImageBitmap -> BitmapPainter(image)
-        is Bitmap -> BitmapPainter(image.asImageBitmap())
-        is Int -> painterResource(id = image)
-        else -> painterResource(id = R.drawable.user)
-    }
+
+    // Used to load the image
+    val imagePainter = universalPainter(image)
+
 
     val infinite = rememberInfiniteTransition()
 
@@ -163,7 +162,7 @@ fun StoryRing(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.background)
                 .clickable {
-                    soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
+                   // soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
                     onClick() }
         ) {
             Image(
@@ -177,11 +176,13 @@ fun StoryRing(
     }
 
     // Liberar recursos al salir
-    DisposableEffect(Unit) {
+   /* DisposableEffect(Unit) {
         onDispose {
             soundPool.release()
         }
     }
+
+    */
 }
 
 /** ----------------------------
@@ -193,19 +194,53 @@ fun StoryRing(
 fun PreviewStoryRing() {
     SoundLinkTheme {
         // Para la preview usamos un painter local. En tu app reemplaza con la imagen real del usuario (Coil, Glide, etc.)
-        val painter = painterResource(id = R.drawable.user) // crea este drawable para probar
+        //val painter = painterResource(id = R.drawable.user) // crea este drawable para probar
+        //URL
+        val url = "https://es.wikipedia.org/wiki/Julian_Casablancas"
         Box(
             modifier = Modifier
                 .padding(24.dp)
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
+            //Send an URL
             StoryRing(
-                image = painter,
+                image = url, //painter,
                 size = 96.dp,
                 ringWidth = 9.dp,
                 isSeen = false,
                 onClick = { /* abrir story */ }
             )
         }
+    }
+}
+
+
+@Composable
+fun universalPainter(image: Any): Painter {
+    return when (image) {
+
+        // URL -> Coil
+        is String -> {
+            rememberAsyncImagePainter(
+                model = image,
+                fallback = painterResource(id = R.drawable.user),
+                error = painterResource(id = R.drawable.user)
+            )
+        }
+
+        // Painter
+        is Painter -> image
+
+        // Bitmap
+        is Bitmap -> BitmapPainter(image.asImageBitmap())
+
+        // ImageBitmap
+        is ImageBitmap -> BitmapPainter(image)
+
+        // Drawable resource ID
+        is Int -> painterResource(id = image)
+
+        // Tipo desconocido -> fallback
+        else -> painterResource(id = R.drawable.user)
     }
 }
