@@ -2,6 +2,7 @@ package com.example.soundlink.core.ui.components
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.media.SoundPool
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -69,6 +71,23 @@ fun StoryRing(
     isSeen: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+
+    val context = LocalContext.current
+
+    // Crear SoundPool(Soundpool es la clase que se encarga de cargar los sonidos)
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+    }
+
+
+    // Cargar sonido
+    val soundId = remember {
+        soundPool.load(context, R.raw.click, 1)
+    }
+
+
     // Convertir imagen a Painter
     val imagePainter = when (image) {
         is Painter -> image
@@ -107,6 +126,7 @@ fun StoryRing(
 
     Box(
         modifier = modifier
+
             .size(size),
         contentAlignment = Alignment.Center
     ) {
@@ -119,7 +139,7 @@ fun StoryRing(
                 .drawBehind {
                     val radius = size.toPx() / 2f
 
-                    // 🔥 Aquí es donde ocurre la rotación del color
+                    // Aquí es donde ocurre la rotación del color
                     val sweepBrush = Brush.sweepGradient(
                         colors = ringColors
                     )
@@ -142,14 +162,24 @@ fun StoryRing(
                 .size(size - ringWidth * 2)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.background)
-                .clickable { onClick() }
+                .clickable {
+                    soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
+                    onClick() }
         ) {
             Image(
                 painter = imagePainter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
             )
+        }
+    }
+
+    // Liberar recursos al salir
+    DisposableEffect(Unit) {
+        onDispose {
+            soundPool.release()
         }
     }
 }

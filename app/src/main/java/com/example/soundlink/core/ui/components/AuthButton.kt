@@ -1,4 +1,5 @@
 package com.example.soundlink.core.ui.components
+import android.media.SoundPool
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -43,6 +46,21 @@ fun AuthButton(
     showRipple: Boolean = true, // Controls if the ripple effect is shown (ripple)
     onClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    // Crear SoundPool(Soundpool es la clase que se encarga de cargar los sonidos)
+    val soundPool = remember {
+        SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+    }
+
+
+    // Cargar sonido
+    val soundId = remember {
+        soundPool.load(context, R.raw.click, 1)
+    }
+
     val colorScheme = MaterialTheme.colorScheme
     val isDark = isSystemInDarkTheme()
 
@@ -81,7 +99,11 @@ fun AuthButton(
                 Modifier.clickable(
                     interactionSource = interactionSource,
                     indication = if (showRipple) null else null, // si quieres pasar null explícito, lo puedes hacer
-                    onClick = onClick
+                    onClick = {
+                        soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
+                        onClick
+
+                    }
                 )
             ),
         shape = RoundedCornerShape(14.dp),
@@ -111,6 +133,13 @@ fun AuthButton(
                 color = contentColor,
                 style = MaterialTheme.typography.bodyLarge
             )
+        }
+    }
+
+    // Liberar recursos al salir
+    DisposableEffect(Unit) {
+        onDispose {
+            soundPool.release()
         }
     }
 }
