@@ -6,6 +6,7 @@ import com.example.soundlink.core.domain.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserApi {
@@ -26,6 +27,8 @@ interface UserApi {
     @POST("/api/users/register")
     suspend fun register(@Body request: RegisterRequest): User
 
+    @PUT("/api/users/{id}")
+    suspend fun updateUser(@Path("id") id: Long, @Body user: User): User
 
 
 

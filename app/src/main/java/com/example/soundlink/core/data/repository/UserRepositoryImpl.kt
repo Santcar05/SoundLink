@@ -21,5 +21,8 @@ class UserRepositoryImpl(
     override suspend fun getCurrentUser(email: String): User? {
         return dataSource.getUserByEmail(email)
     }
+    override suspend fun updateUser(user: User): User {
+        return dataSource.updateUser(user.id, user)
+    }
 
 }

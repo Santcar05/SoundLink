@@ -28,6 +28,12 @@ class SessionViewModel(
         _state.value = SessionState()
     }
 
+    fun updateUser(user: User) {
+        _state.value = _state.value.copy(
+            user = user,
+            isLoggedIn = true
+        )
+    }
 
 
 }
