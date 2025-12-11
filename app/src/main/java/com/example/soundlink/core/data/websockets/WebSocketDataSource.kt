@@ -15,12 +15,11 @@ class WebSocketDataSource(
     private val json: Json
 ) {
 
-    // ✅ Ahora es una función suspend que espera la conexión
     suspend fun connect() {
         Log. d("WebSocketDataSource", "🔌 Conectando StompClient...")
         stompClient.connect()
 
-        // ✅ ESPERAR a que STOMP esté conectado ANTES de suscribirse
+        // ESPERAR a que STOMP esté conectado ANTES de suscribirse
         Log.d("WebSocketDataSource", "⏳ Esperando confirmación CONNECTED de STOMP...")
         val connected = withTimeoutOrNull(10000) {
             stompClient.connectionState.first { state ->

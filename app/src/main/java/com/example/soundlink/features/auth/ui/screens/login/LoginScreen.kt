@@ -47,7 +47,8 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     sessionViewModel: SessionViewModel,
     onRegisterClick: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit
 ) {
 
     var state by remember { mutableStateOf(LoginState()) }
@@ -119,7 +120,7 @@ fun LoginScreen(
                 ),
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable { /* TODO */ }
+                    .clickable { onForgotPasswordClick() }
                     .align(Alignment.End)
             )
 
@@ -190,6 +191,8 @@ fun LoginScreenPreview() {
             sessionViewModel = SessionViewModel(GetUserUseCase(AppContainer.userRepository)),
             onRegisterClick = {},
             onLoginClick = {},
+            onForgotPasswordClick = {}
             )
+
     }
 }

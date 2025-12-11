@@ -53,11 +53,11 @@ fun FeedScreen(
     modifier: Modifier = Modifier,
     sessionViewModel: SessionViewModel,
     feedViewModel: FeedViewModel,
-    onFabClick: () -> Unit
+    onFabClick: () -> Unit,
+    // NavBar composable
+    navBar: @Composable () -> Unit,
 ) {
     val state = feedViewModel.uiState.collectAsState().value
-
-    var selectedIndex by remember { mutableStateOf(0) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -70,15 +70,7 @@ fun FeedScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding() // Used to prevent the navbar from being hidden by the bottom navigation bar
             ) {
-                NavbarSoundLink(
-                    items = listOf(
-                        NavBarItemSoundLink(icon = R.drawable.home, label = "Home"),
-                        NavBarItemSoundLink(icon = R.drawable.search, label = "Search"),
-                        NavBarItemSoundLink(icon = R.drawable.user, label = "Profile"),
-                    ),
-                    selectedIndex = selectedIndex,
-                    onItemSelected = { selectedIndex = it },
-                )
+                navBar()
             }
         }
     ){ contentPadding ->
@@ -161,6 +153,7 @@ fun FeedScreen(
 @Composable
 fun FeedScreenPreview() {
 
+    val selectedIndex = remember { mutableStateOf(0) }
     SoundLinkTheme {
         FeedScreen(
             sessionViewModel = SessionViewModel(getUserUseCase = AppContainer.GetUserUseCase),
@@ -177,6 +170,21 @@ fun FeedScreenPreview() {
                     Log.d("FeedScreen", "Sum: $sum")
                 },
 
+            navBar = {
+                NavbarSoundLink(
+                    items = listOf(
+                        NavBarItemSoundLink(icon = R.drawable.home, label = "Home"),
+                        NavBarItemSoundLink(icon = R.drawable.musicnotes, label = "Activities"),
+                        NavBarItemSoundLink(icon = R.drawable.search, label = "Search"),
+                        NavBarItemSoundLink(icon = R.drawable.user, label = "Profile"),
+
+                    ),
+                    selectedIndex = 0,
+                    onItemSelected = {
+
+                                     },
+                )
+            }
 
         )
     }

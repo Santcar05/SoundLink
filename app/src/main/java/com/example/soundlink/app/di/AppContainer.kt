@@ -24,6 +24,7 @@ import com.example.soundlink.core.domain.usecases.ObserveNewPostsUseCase
 import com.example.soundlink.features.auth.usecases.LoginUseCase
 import com.example.soundlink.features.auth.usecases.RegisterUseCase
 import com.example.soundlink.features.feed.usecases.CreatePostUseCase
+import com.example.soundlink.features.profile.usecases.UpdateUserUseCase
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -84,4 +85,5 @@ object AppContainer {
     val ConnectWebSocketUseCase = ConnectWebSocketUseCase(feedWebSocketRepository)
     val DisconnectWebSocketUseCase = DisconnectWebSocketUseCase(feedWebSocketRepository)
     val ObserveNewPostsUseCase = ObserveNewPostsUseCase(feedWebSocketRepository)
+    val UpdateUserUseCase = UpdateUserUseCase(userRepository)
 }
