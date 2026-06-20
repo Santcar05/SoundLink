@@ -4,10 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,7 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -37,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.soundlink.R
 import com.example.soundlink.app.di.AppContainer
+import com.example.soundlink.app.theme.BlueNeon
 import com.example.soundlink.app.theme.SoundLinkTheme
 import com.example.soundlink.core.domain.model.User
 import com.example.soundlink.core.ui.session.SessionViewModel
@@ -51,7 +57,8 @@ import com.example.soundlink.core.ui.session.SessionViewModel
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDnaClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -172,6 +179,75 @@ fun ProfileScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ADN Sonoro banner
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.07f)
+                            )
+                        )
+                    )
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
+                        RoundedCornerShape(14.dp)
+                    )
+                    .clickable(onClick = onDnaClick)
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "ADN",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "ADN Sonoro",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            "Descubre tu perfil musical único",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Text(
+                        "›",
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(18.dp))
 
             // Switch entre ver y editar
@@ -283,119 +359,204 @@ private fun InfoRow(label: String, value: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+private fun NeonFormField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    errorMessage: String? = null
+) {
+    var isFocused by remember { mutableStateOf(false) }
+    val glowIntensity by animateFloatAsState(
+        targetValue = if (isFocused) 14f else 0f,
+        animationSpec = tween(280),
+        label = "fieldGlow"
+    )
+    val errorColor = Color(0xFFFF1744)
+    Column(modifier = modifier) {
+        Box(
+            modifier = Modifier.shadow(
+                elevation = glowIntensity.dp,
+                shape = RoundedCornerShape(12.dp),
+                clip = false,
+                ambientColor = if (isError) errorColor else BlueNeon,
+                spotColor = if (isError) errorColor else BlueNeon
+            )
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { isFocused = it.isFocused },
+                label = { Text(label) },
+                keyboardOptions = keyboardOptions,
+                visualTransformation = visualTransformation,
+                trailingIcon = trailingIcon,
+                isError = isError,
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = outlinedTextFieldColors(
+                    focusedContainerColor = Color(0xFF0A121A),
+                    unfocusedContainerColor = Color(0xFF0A121A),
+                    focusedBorderColor = BlueNeon,
+                    unfocusedBorderColor = Color(0xFF1F2E3A),
+                    cursorColor = BlueNeon,
+                    focusedTextColor = Color(0xFFE8F4FF),
+                    unfocusedTextColor = Color(0xFFE8F4FF),
+                    focusedLabelColor = BlueNeon,
+                    unfocusedLabelColor = Color(0xFF4A6070),
+                    errorBorderColor = errorColor,
+                    errorTextColor = errorColor,
+                    errorLabelColor = errorColor
+                )
+            )
+        }
+        if (errorMessage != null) {
+            Text(
+                errorMessage,
+                color = errorColor,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 private fun EditProfileForm(
     state: ProfileUiState,
     onUpdate: (field: String, value: Any) -> Unit,
     onSave: () -> Unit,
     onDiscard: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        // Nombre
-        OutlinedTextField(
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        NeonFormField(
             value = state.user.name,
             onValueChange = { onUpdate("name", it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Nombre") },
+            label = "Nombre",
             isError = state.formErrors.name != null,
-            singleLine = true,
-            colors = outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                cursorColor = MaterialTheme.colorScheme.primary
-            )
+            errorMessage = state.formErrors.name
         )
-        state.formErrors.name?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Email
-        OutlinedTextField(
+        NeonFormField(
             value = state.user.email,
             onValueChange = { onUpdate("email", it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Email") },
+            label = "Email",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             isError = state.formErrors.email != null,
-            singleLine = true
+            errorMessage = state.formErrors.email
         )
-        state.formErrors.email?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Password
-        var passwordVisible by remember { mutableStateOf(false) }
-        OutlinedTextField(
+        NeonFormField(
             value = state.user.password,
             onValueChange = { onUpdate("password", it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Contraseña") },
-            singleLine = true,
+            label = "Contraseña",
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 TextButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Text(if (passwordVisible) "Ocultar" else "Mostrar", color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        if (passwordVisible) "Ocultar" else "Mostrar",
+                        color = BlueNeon,
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             },
-            isError = state.formErrors.password != null
+            isError = state.formErrors.password != null,
+            errorMessage = state.formErrors.password
         )
-        state.formErrors.password?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Age
-        OutlinedTextField(
+        NeonFormField(
             value = if (state.user.age == 0) "" else state.user.age.toString(),
-            onValueChange = {
-                val digits = it.filter { ch -> ch.isDigit() }
-                onUpdate("age", digits)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Edad") },
+            onValueChange = { onUpdate("age", it.filter { ch -> ch.isDigit() }) },
+            label = "Edad",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = state.formErrors.age != null,
-            singleLine = true
+            errorMessage = state.formErrors.age
         )
-        state.formErrors.age?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Avatar URL (opcional)
-        OutlinedTextField(
+        NeonFormField(
             value = state.user.avatarUrl,
             onValueChange = { onUpdate("avatar", it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("URL de avatar (opcional)") },
-            singleLine = true
+            label = "URL de avatar (opcional)"
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Verified toggle
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Cuenta verificada", modifier = Modifier.weight(1f))
-            Switch(
-                checked = state.user.verified,
-                onCheckedChange = { onUpdate("verified", it) },
-                colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF0A121A))
+                .border(1.dp, Color(0xFF1F2E3A), RoundedCornerShape(12.dp))
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Cuenta verificada",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = Color(0xFFE8F4FF)
+                    )
+                    Text(
+                        "Solicita verificación al equipo",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF4A6070)
+                    )
+                }
+                Switch(
+                    checked = state.user.verified,
+                    onCheckedChange = { onUpdate("verified", it) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color(0xFF050A0F),
+                        checkedTrackColor = BlueNeon,
+                        uncheckedThumbColor = Color(0xFF4A6070),
+                        uncheckedTrackColor = Color(0xFF1F2E3A),
+                        uncheckedBorderColor = Color(0xFF1F2E3A)
+                    )
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // Acción: Guardar / Cancelar
+        // Save / Discard buttons
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
                 onClick = onSave,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                modifier = Modifier
+                    .weight(1f)
+                    .shadow(
+                        elevation = 16.dp,
+                        shape = RoundedCornerShape(12.dp),
+                        ambientColor = BlueNeon,
+                        spotColor = BlueNeon
+                    ),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BlueNeon,
+                    contentColor = Color(0xFF050A0F)
+                )
             ) {
-                Text("Guardar", color = MaterialTheme.colorScheme.onPrimary)
+                Text(
+                    "Guardar",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.ExtraBold)
+                )
             }
             OutlinedButton(
                 onClick = onDiscard,
                 modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Descartar")
+                Text("Descartar", color = Color(0xFF4A6070))
             }
         }
     }

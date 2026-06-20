@@ -1,6 +1,5 @@
 package com.example.soundlink.features.feed.ui.screens.feed
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +58,7 @@ fun FeedScreen(
     navBar: @Composable () -> Unit,
 ) {
     val state = feedViewModel.uiState.collectAsState().value
+    val likedPosts = remember { mutableStateMapOf<Int, Boolean>() }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -91,9 +92,11 @@ fun FeedScreen(
                         .fillMaxWidth()
                 ) {
                     items(state.stories) { story ->
-                        Column(modifier = modifier.padding(8.dp),
+                        Column(
+                            modifier = modifier.padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally){
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             StoryRing(
                                 image = story.user.avatarUrl,
                                 size = 88.dp,
@@ -102,31 +105,27 @@ fun FeedScreen(
                                 onClick = { }
                             )
                             Text(story.user.name, fontSize = 14.sp)
-                            Log.d("FeedScreen", "Story: ${story.user.name}")
                         }
-
                     }
                 }
             }
 
             //Posts
             LazyColumn {
-                items(state.posts){ post ->
+                itemsIndexed(state.posts) { index, post ->
+                    val isLiked = likedPosts[index] == true
                     AnimatedLoadingBorder(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(20.dp),
                         borderWidth = 3.dp
                     ) {
-
-                        Log.d("FeedScreen", "Post: ${post.title}")
-
                         PostCard(
                             modifier = modifier,
                             avatar = universalPainter(post.user.avatarUrl),
                             username = post.user.name,
                             verified = post.user.verified,
-                            genre = "Rock", //TODO: Cambiar por el género del post
+                            genre = post.tags.firstOrNull()
+                                ?.replaceFirstChar { it.uppercase() } ?: "Música",
                             time = timestampToLegible(post.timestamp),
                             title = post.title,
                             description = post.description,
@@ -134,11 +133,12 @@ fun FeedScreen(
                             likes = post.likes.toString(),
                             comments = post.comments.toString(),
                             shares = post.shares.toString(),
+                            isLiked = isLiked,
+                            onLikeClick = { likedPosts[index] = !isLiked },
                             onPlayClick = { },
                             onMoreClick = { }
                         )
                     }
-
                 }
             }
 
@@ -165,10 +165,7 @@ fun FeedScreenPreview() {
                 disconnectWebSocketUseCase = AppContainer.DisconnectWebSocketUseCase,
                 observeNewPostsUseCase = AppContainer.ObserveNewPostsUseCase
             ),
-                onFabClick = {
-                    val sum = 1 + 1
-                    Log.d("FeedScreen", "Sum: $sum")
-                },
+                onFabClick = {},
 
             navBar = {
                 NavbarSoundLink(
