@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.soundlink.R
+import com.example.soundlink.app.theme.PinkNeon
 import com.example.soundlink.app.theme.SoundLinkTheme
 
 @Composable
@@ -47,10 +48,19 @@ fun PostCard(
     likes: String,
     comments: String,
     shares: String,
+    isLiked: Boolean = false,
+    onLikeClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
 ) {
     val shape = RoundedCornerShape(20.dp)
+
+    // ------------ Like animation ----------------
+    val likeScale by animateFloatAsState(
+        targetValue = if (isLiked) 1.28f else 1f,
+        animationSpec = spring(Spring.DampingRatioMediumBouncy),
+        label = "like"
+    )
 
     // ------------ Animación de elevación ----------------
     var pressed by remember { mutableStateOf(false) }
@@ -222,17 +232,22 @@ fun PostCard(
 
             // Like
             Row(
-                modifier = Modifier.clickable(onClick = {//TODO
-                    }),
+                modifier = Modifier.clickable(onClick = onLikeClick),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(id = R.drawable.like), contentDescription = null, // ic_like
+                Icon(
+                    painterResource(id = R.drawable.like),
+                    contentDescription = null,
                     modifier = Modifier
-                        .size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                        .size(24.dp)
+                        .graphicsLayer { scaleX = likeScale; scaleY = likeScale },
+                    tint = if (isLiked) PinkNeon else MaterialTheme.colorScheme.primary
                 )
                 Spacer(Modifier.width(6.dp))
-                Text(likes, color = MaterialTheme.colorScheme.onBackground)
+                Text(
+                    likes,
+                    color = if (isLiked) PinkNeon else MaterialTheme.colorScheme.onBackground
+                )
             }
 
             // Comments
@@ -273,7 +288,7 @@ fun PreviewPostCard() {
             username = "The Neons",
             verified = true,
             title = "Midnight Drive - Nuevo Single",
-            description = "Nuestro nuevo single ya está disponible 🎵 Producido con sintetizadores vintage y beats modernos.",
+            description = "Nuestro nuevo single ya está disponible. Producido con sintetizadores vintage y beats modernos.",
             tags = listOf("synthwave", "newmusic", "electronic"),
             likes = "1.2K",
             comments = "234",
@@ -359,7 +374,7 @@ fun PreviewPostCard2() {
                 username = "The Neons",
                 verified = true,
                 title = "Midnight Drive - Nuevo Single",
-                description = "Nuestro nuevo single ya está disponible 🎵 Producido con sintetizadores vintage y beats modernos.",
+                description = "Nuestro nuevo single ya está disponible. Producido con sintetizadores vintage y beats modernos.",
                 tags = listOf("synthwave", "newmusic", "electronic"),
                 likes = "1.2K",
                 comments = "234",
